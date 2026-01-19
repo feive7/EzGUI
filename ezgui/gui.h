@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <functional>
+using Command = std::function<void()>;
+
 #include "raylib.h"
 
 struct TextLabel {
@@ -10,7 +13,7 @@ struct TextLabel {
 };
 struct ClickDetector {
 	Rectangle rect;      // Position and size
-	const char* command; // Command to run on click
+	Command onclick;     // Click callback
 };
 struct ColorRect {
 	Rectangle rect;
@@ -36,7 +39,7 @@ class GUI {
 		for (const ClickDetector& cd : clickdetectors) {
 			bool inside_cd = CheckCollisionPointRec(mpos,cd.rect);
 			if (inside_cd && click) {
-				system(cd.command);
+				cd.onclick();
 			}
 		}
 	}
@@ -102,7 +105,7 @@ public:
 		ImageRect new_image_label = { label_rect,image };
 		imagerects.push_back(new_image_label);
 	}
-	void addTextButton(int x, int y, int font_size, Color font_color, const char* text, Color bg_color, Color border_color, const char* command, int padding = 2) {
+	void addTextButton(int x, int y, int font_size, Color font_color, const char* text, Color bg_color, Color border_color, Command command, int padding = 2) {
 		TextLabel new_label = { x,y,font_size,font_color,text };
 		labels.push_back(new_label);
 
@@ -119,7 +122,7 @@ public:
 		ColorRect new_colorrect = { click_area, bg_color, border_color };
 		colorrects.push_back(new_colorrect);
 	}
-	void addRawButton(int x, int y, int width, int height, const char* command) {
+	void addRawButton(int x, int y, int width, int height, Command command) {
 		Rectangle click_area = { x,y,width,height };
 		ClickDetector new_cd = { click_area, command };
 		clickdetectors.push_back(new_cd);

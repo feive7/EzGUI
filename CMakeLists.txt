@@ -8,6 +8,7 @@ endif()
 
 find_package(raylib REQUIRED)
 add_executable(ezgui main.cpp "ezgui/gui.h" )
+set_property(TARGET ezgui PROPERTY CXX_STANDARD 23)
 target_link_libraries(ezgui raylib)
 
 install(TARGETS ezgui RUNTIME DESTINATION bin)
