@@ -5,8 +5,8 @@
 int main() {
 	// Create GUI
 	GUI main_gui(500,500,"EzGUI");
-	main_gui.addLabel(40, 64, 20, "Hello EzGUI!");
-	main_gui.addButton(200, 200, 40, "Button", "echo Hello World");
+	main_gui.addTextLabel(40, 64, 20, "Hello EzGUI!");
+	main_gui.addTextButton(200, 200, 40, "Button", "echo Hello World");
 
 	main_gui.show();
 
