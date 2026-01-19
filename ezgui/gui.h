@@ -2,23 +2,18 @@
 #include <vector>
 #include "raylib.h"
 
-#include "area.h"
-
 struct TextLabel {
-	int x;
-	int y;
-	int font_size;
-	const char* text;
+	Vector2 pos;      // Label position
+	int font_size;    // Label font size
+	const char* text; // Label text
 };
 struct ClickDetector {
-	Area area;
-	const char* command;
+	Rectangle rect;      // Position and size
+	const char* command; // Command to run on click
 };
+
 struct ColorRect {
-	int x;
-	int y;
-	int width;
-	int height;
+	Rectangle rect;
 	Color color;
 };
 
@@ -27,7 +22,7 @@ class GUI {
 		Vector2 mpos = GetMousePosition();
 		bool click = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 		for (const ClickDetector& cd : clickdetectors) {
-			bool inside_cd = PointInArea(mpos, cd.area);
+			bool inside_cd = CheckCollisionPointRec(mpos,cd.rect);
 			if (inside_cd && click) {
 				system(cd.command);
 			}
@@ -37,10 +32,10 @@ class GUI {
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 		for (const ColorRect& cr : colorrects) {
-			DrawRectangle(cr.x, cr.y, cr.width, cr.height, cr.color);
+			DrawRectangleRec(cr.rect,cr.color);
 		}
 		for (const TextLabel& label : labels) {
-			DrawText(label.text, label.x, label.y, label.font_size, BLACK);
+			DrawTextEx(GetFontDefault(), label.text, label.pos, label.font_size, 2, BLACK);
 		}
 		EndDrawing();
 	}
@@ -60,7 +55,7 @@ public:
 
 	// GUI constructors
 	void addTextLabel(int x, int y, int font_size, const char* text) {
-		TextLabel new_label = { x,y,font_size,text };
+		TextLabel new_label = {x,y,font_size,text};
 		labels.push_back(new_label);
 	}
 	void addTextButton(int x, int y, int font_size, const char* text, const char* command, int padding = 2) {
@@ -69,18 +64,15 @@ public:
 
 		int text_measure = TextLength(text) * font_size * 0.575;
 
-		Area click_area = {
-			x - padding,y - padding,                            // Minimum
-			x + text_measure + padding, y + font_size + padding // Maximum
+		Rectangle click_area = {
+			x - padding,y - padding,
+			text_measure + padding, font_size + padding,
 		};
-		ClickDetector new_cd = { click_area,command };
+
+		ClickDetector new_cd = { click_area, command };
 		clickdetectors.push_back(new_cd);
 
-		ColorRect new_colorrect = {
-			x - padding,y - padding,
-			text_measure + padding * 2, font_size + padding * 2,
-			GRAY
-		};
+		ColorRect new_colorrect = { click_area, GRAY };
 		colorrects.push_back(new_colorrect);
 	}
 
