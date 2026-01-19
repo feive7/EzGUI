@@ -45,7 +45,7 @@ class GUI {
 		// - Add drawing order
 
 		BeginDrawing();
-		ClearBackground(RAYWHITE);
+		ClearBackground(background_color);
 		for (const ImageRect& ir : imagerects) {
 			DrawTexturePro(ir._texture, { 0,0,(float)ir.image.width,(float)ir.image.height }, ir.rect, { 0 }, 0, WHITE);
 		}
@@ -56,8 +56,15 @@ class GUI {
 		for (const TextLabel& label : labels) {
 			DrawTextEx(GetFontDefault(), label.text, label.pos, label.font_size, 2, label.font_color);
 		}
+
+		// Draw clickdetector bounds for debug purposes
+		/*for (const ClickDetector& cd : clickdetectors) {
+			DrawRectangleLinesEx(cd.rect, 2.0f, RED);
+		}*/
+		
 		EndDrawing();
 	}
+	Color background_color = RAYWHITE;
 public:
 	// Window properties
 	const int width;
@@ -79,8 +86,18 @@ public:
 		labels.push_back(new_label);
 	}
 	void addImageLabel(int x, int y, int width, int height, const char* filename) {
-		Rectangle label_rect = { x,y,width,height };
 		Image image = LoadImage(filename);
+		float ratio = (float)image.width / (float)image.height;
+
+		// Handle autoscaling
+		if (width == -1) {
+			width = height * ratio;
+		}
+		if (height == -1) {
+			height = width / ratio;
+		}
+
+		Rectangle label_rect = { x,y,width,height };
 		ImageResize(&image, width, height);
 		ImageRect new_image_label = { label_rect,image };
 		imagerects.push_back(new_image_label);
@@ -102,12 +119,32 @@ public:
 		ColorRect new_colorrect = { click_area, bg_color, border_color };
 		colorrects.push_back(new_colorrect);
 	}
+	void addRawButton(int x, int y, int width, int height, const char* command) {
+		Rectangle click_area = { x,y,width,height };
+		ClickDetector new_cd = { click_area, command };
+		clickdetectors.push_back(new_cd);
+	}
+
+	// GUI controls
+	void makeBorderless(bool state = true) {
+		if (state) {
+			SetWindowState(FLAG_WINDOW_UNDECORATED);
+		}
+		else {
+			printf("TO-DO: figure out how to add borders back");
+			exit(9);
+		}
+	}
+	void setBackgroundColor(Color color) {
+		this->background_color = color;
+	}
 
 	// Main GUI loop
 	void show() {
 		// Load window assets
 		Image favicon = LoadImage("../../../favicon.png");
 		// Create window
+		SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
 		InitWindow(width, height, title);
 		SetWindowIcon(favicon);
 
