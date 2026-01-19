@@ -1,24 +1,14 @@
 #include <iostream>
-#include "raylib.h"
+
+#include "ezgui/gui.h"
 
 int main() {
-	// Define window dimensions
-	const int window_width = 800;
-	const int window_height = 600;
+	// Create GUI
+	GUI main_gui(500,500,"EzGUI");
 
-	// Create window
-	InitWindow(window_width, window_height, "EzGUI Demo");
+	main_gui.show();
 
-	// Main loop
-	while (!WindowShouldClose()) {
-		BeginDrawing();
-		ClearBackground(RAYWHITE);
-		DrawText("Hello Raylib!", 5, 5, 20, BLACK);
-		EndDrawing();
-	}
-
-	// Close window
-	CloseWindow();
+	std::cout << "GUI closed" << std::endl;
 
 	return 0;
 }

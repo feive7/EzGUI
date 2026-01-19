@@ -7,7 +7,7 @@ set(raylib_DIR "../Libraries/raylib")
 endif()
 
 find_package(raylib REQUIRED)
-add_executable(ezgui main.cpp)
+add_executable(ezgui main.cpp "ezgui/gui.h")
 target_link_libraries(ezgui raylib)
 
 install(TARGETS ezgui RUNTIME DESTINATION bin)
