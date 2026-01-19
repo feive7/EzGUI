@@ -14,8 +14,12 @@ public:
 	const char* title;
 	GUI(int width, int height, const char* title) : width(width), height(height), title(title) {}
 	void show() {
+		// Load window assets
+		Image favicon = LoadImage("../../../favicon.png");
+
 		// Create window
 		InitWindow(width, height, title);
+		SetWindowIcon(favicon);
 
 		// Draw the window while open
 		while (!WindowShouldClose()) {
